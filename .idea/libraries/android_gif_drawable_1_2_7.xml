@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="android-gif-drawable-1.2.7">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/34338de85368c810a795fe5e01e4048d83ba89ad/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/34338de85368c810a795fe5e01e4048d83ba89ad/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pl.droidsonroids.gif/android-gif-drawable/1.2.7/3b891686856d06e791bd6556e54ab8ec762ff5c1/android-gif-drawable-1.2.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

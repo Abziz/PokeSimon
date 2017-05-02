@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#cc3333</color>
+    <color name="colorPrimaryDark">#a61818</color>
+    <color name="colorAccent">#df769a</color>
+    <color name="simon_red_off">#c62828</color>
+    <color name="simon_green_off">#2e7d32</color>
+    <color name="simon_blue_off">#1976d2</color>
+    <color name="simon_yellow_off">#afb42b</color>
+    <color name="simon_red">#ef5350</color>
+    <color name="simon_green">#4caf50</color>
+    <color name="simon_blue">#42a5f5</color>
+    <color name="simon_yellow">#ffee58</color>
+
+</resources>
