@@ -1,26 +1,30 @@
 package com.example.abziz.simon;
 
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class StartMenuActivity extends AppCompatActivity {
-
+    MediaPlayer mp = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_menu);
+        playMusic(R.raw.themesong);
         UpdateListeners();
     }
 
 
-
+    private void playMusic(int song) {
+        mp = MediaPlayer.create(this, song);
+        mp.setLooping(true);
+        mp.setVolume(0.5f, 0.5f);
+        mp.start();
+    }
 
     private void UpdateListeners(){
         ImageButton btn = (ImageButton) findViewById(R.id.start_button);
@@ -30,6 +34,22 @@ public class StartMenuActivity extends AppCompatActivity {
                 StartGame();
             }
         });
+    }
+
+    @Override
+    protected void onStop()
+    {
+        if (mp != null)
+            mp.stop();
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        mp.stop();
+        mp.release();
+        playMusic(R.raw.themesong);
     }
 
     private void StartGame(){

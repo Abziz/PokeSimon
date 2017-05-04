@@ -1,14 +1,16 @@
 package com.example.abziz.simon;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 import pl.droidsonroids.gif.AnimationListener;
@@ -16,177 +18,195 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 public class GameActivity extends AppCompatActivity {
-    final Handler hand = new Handler();
-    GifImageView[] pokemons;
-    final Random rand = new Random();
-    GifDrawable[] roarAnimation ;
-    GifDrawable[] idleAnimation ;
-    int[] roarSounds;
-    boolean AnimationRunning = false;
-    static final int Bulbasaur =0, Charmander =1, Squirtle=2,Pikachu=3;
-    ArrayList<Integer> sequence = new ArrayList();
-    int current = 0;
+    MediaPlayer mp;
+    private final Handler hand = new Handler();
+    private SoundPoolPlayer sp;
+    private int[][] sounds;
+    private GifImageView[] pokemons;
+    private final Random rand = new Random();
+    private GifDrawable[] roarAnimation ;
+    private GifDrawable[] idleAnimation ;
+
+    private boolean player_finished = false,game_over = false;
+    private static final int Bulbasaur =0, Charmander =1, Squirtle=2,Pikachu=3;
+    private ArrayList<Integer> sequence = new ArrayList<>();
+    private int seq_index = 0;
+    int score = 0;
+
+    TextView scoreView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        AssignViews();
+        sp = new SoundPoolPlayer(this);
+        playMusic(R.raw.battle);
+        linkViews();
         setListeners();
+        NextLevel();
+    }
+    private void playMusic(int song) {
+        if( mp != null ){
+            if(mp.isPlaying()){
+                return;
+            }
+        }
+        mp = MediaPlayer.create(this, song);
+        mp.setLooping(true);
+        mp.setVolume(0.5f,0.5f);
+        mp.start();
     }
 
     private void NextLevel(){
-        int r = rand.nextInt(4);
-        ShowText((new Integer(r)).toString());
-        sequence.add(r);
-
+        sequence.add(rand.nextInt(4));
+        PlayAll();
     }
     private void PlayAll() {
-        for( GifImageView v : pokemons){
-            v.setEnabled(false);
-        }
-        current  = 0;
+        ToggleButtons(false);
+        seq_index = 0;
         hand.postDelayed(
             new Runnable() {
             @Override
             public void run() {
-                    int pokemon = sequence.get(current);
-
-                    if( current != 0){
-                        int last = sequence.get(current-1);
-                        pokemons[last].setPressed(false);
-                        pokemons[last].setImageDrawable(idleAnimation[last]);
-                    }
-                    pokemons[pokemon].setImageDrawable(roarAnimation[pokemon]);
-                    pokemons[pokemon].setPressed(true);
-                    if(current < sequence.size()-1) {
-                        current++;
-                        hand.postDelayed(this, roarAnimation[pokemon].getDuration());
-                    }else{
-                        int last = sequence.get(sequence.size()-1);
-                        pokemons[last].setPressed(false);
-                        pokemons[last].setImageDrawable(idleAnimation[last]);
-                        for( GifImageView v : pokemons){
-                            v.setEnabled(true);
-                        }
-                    }
+                int pokemon = sequence.get(seq_index);
+                playRandomSound(pokemon);
+                roarAnimation[pokemon].reset();
+                roarAnimation[pokemon].setLoopCount(1);
+                pokemons[pokemon].setPressed(true);
+                pokemons[pokemon].setImageDrawable(roarAnimation[pokemon]);
+                if(seq_index < sequence.size()-1) {
+                    seq_index++;
+                    hand.postDelayed(this, roarAnimation[pokemon].getDuration());
+                }else{
+                    seq_index = 0;
+                    ToggleButtons(true);
+                }
             }
         }
-        ,roarAnimation[sequence.get(0)].getDuration());
-
-
+        ,1000);
     }
 
-    private void AssignViews(){
+    private void playRandomSound(int pokemon){
+        sp.playShortResource(sounds[pokemon][new Random().nextInt(3)]);
+        mp.setVolume(0.25f,0.25f);
+    }
+
+    private void updateScore(){
+        scoreView.setText(String.format(Locale.getDefault(),"%d",score));
+    }
+    private void linkViews(){
         try {
             pokemons = new GifImageView[4];
             roarAnimation = new GifDrawable[4];
             idleAnimation = new GifDrawable[4];
-            roarSounds = new int[4];
+            sounds = new int[4][4];
 
+            sounds[Pikachu][0] = R.raw.pikachu_happy_1;
+            sounds[Pikachu][1] = R.raw.pikachu_happy_2;
+            sounds[Pikachu][2] = R.raw.pikachu_happy_3;
             pokemons[Pikachu] = (GifImageView) findViewById(R.id.pikachu);
             idleAnimation[Pikachu] = new GifDrawable( getResources(), R.drawable.pikachu_idle);
-            roarAnimation[Pikachu] = new GifDrawable( getResources(), R.drawable.pikachu_roar);;
-            roarAnimation[Pikachu].addAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationCompleted(int loopNumber) {
-                    pokemons[Pikachu].setPressed(false);
-                    pokemons[Pikachu].setImageDrawable(idleAnimation[Pikachu]);
-                }
-            });
+            roarAnimation[Pikachu] = new GifDrawable( getResources(), R.drawable.pikachu_roar);
+            sounds[Bulbasaur][0] = R.raw.bulbasaur_happy_1;
+            sounds[Bulbasaur][1] = R.raw.bulbasaur_happy_2;
+            sounds[Bulbasaur][2] = R.raw.bulbasaur_happy_3;
 
             pokemons[Bulbasaur] = (GifImageView) findViewById(R.id.bulbasaur);
             idleAnimation[Bulbasaur] = new GifDrawable( getResources(),R.drawable.bulbasaur_idle);
             roarAnimation[Bulbasaur] = new GifDrawable( getResources(),R.drawable.bulbasaur_roar);
-            roarAnimation[Bulbasaur].addAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationCompleted(int loopNumber) {
-                    pokemons[Bulbasaur].setPressed(false);
-                    pokemons[Bulbasaur].setImageDrawable(idleAnimation[Bulbasaur]);
-                }
-            });
 
-
+            sounds[Charmander][0]= R.raw.charmander_happy_1;
+            sounds[Charmander][1]= R.raw.charmander_happy_2;
+            sounds[Charmander][2]= R.raw.charmander_happy_3;
             pokemons[Charmander] = (GifImageView) findViewById(R.id.charmander);
             idleAnimation[Charmander] = new GifDrawable( getResources(),R.drawable.charmander_idle);
             roarAnimation[Charmander] = new GifDrawable( getResources(),R.drawable.charmander_roar);
-            roarAnimation[Charmander].addAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationCompleted(int loopNumber) {
-                    pokemons[Charmander].setPressed(false);
-                    pokemons[Charmander].setImageDrawable(idleAnimation[Charmander]);
-                }
-            });
 
+            sounds[Squirtle][0]= R.raw.squirtle_happy_1;
+            sounds[Squirtle][1]= R.raw.squirtle_happy_2;
+            sounds[Squirtle][2]= R.raw.squirtle_happy_3;
             pokemons[Squirtle] = (GifImageView) findViewById(R.id.squirtle);
             idleAnimation[Squirtle] = new GifDrawable( getResources(),R.drawable.squirtle_idle);
             roarAnimation[Squirtle] = new GifDrawable( getResources(),R.drawable.squirtle_roar);
-            roarAnimation[Squirtle].addAnimationListener(new AnimationListener() {
-                @Override
-                public void onAnimationCompleted(int loopNumber) {
-                    pokemons[Squirtle].setPressed(false);
-                    pokemons[Squirtle].setImageDrawable(idleAnimation[Squirtle]);
-                }
-            });
-
-
-
+            scoreView = (TextView)findViewById(R.id.score_val);
         }catch (Exception e){
             ShowText(e.getMessage());
         }
     }
 
     private void setListeners(){
-        pokemons[Pikachu].setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                act(Pikachu);
-                return false;
-            }
-        });
+        for( int i =0;i<4;i++){
+            final int pokemon = i;
+            pokemons[pokemon].setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    mp.setVolume(0.25f,0.25f);
+                    int current = seq_index++;
+                    if(current == sequence.size()-1){
+                        ToggleButtons(false);
+                        player_finished = true;
+                    }
+                    if (sequence.get(current) != pokemon) {
+                        gameOver();
+                    } else {
+                        score++;
+                        updateScore();
+                    }
+                    act(pokemon);
+                    return false;
+                }
+            });
 
-//        pokemons[Pikachu].setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                act(pokemons[Pikachu],R.drawable.pikachu_idle,R.drawable.pikachu_move,null);
-//            }
-//        });
-
-        pokemons[Bulbasaur].setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                act(Bulbasaur);
-                return false;
-            }
-        });
-
-        pokemons[Charmander].setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                act(Charmander);
-                return false;
-            }
-        });
-
-        pokemons[Squirtle].setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                act(Squirtle);
-                return false;
-            }
-        });
+            roarAnimation[pokemon].addAnimationListener(new AnimationListener() {
+                @Override
+                public void onAnimationCompleted(int loopNumber) {
+                    pokemons[pokemon].setPressed(false);
+                    pokemons[pokemon].setImageDrawable(idleAnimation[pokemon]);
+                    if( player_finished && !game_over ){
+                        player_finished =false;
+                        NextLevel();
+                    }
+                    mp.setVolume(0.5f,0.5f);
+                }
+            });
+        }
+    }
+    private void ToggleButtons(boolean state){
+        for( View v: pokemons){
+            v.setEnabled(state);
+        }
+    }
+    private void gameOver(){
+        game_over =true;
+        ToggleButtons(false);
+        ShowText("GAME OVER!");
     }
 
     private void ShowText(String text){
-        Toast.makeText(this,text,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,text,Toast.LENGTH_LONG).show();
     }
 
     private void act(final int pokemon){
+        sp.playShortResource(sounds[pokemon][new Random().nextInt(3)]);
         roarAnimation[pokemon].reset();
         roarAnimation[pokemon].setLoopCount(1);
         pokemons[pokemon].setPressed(true);
         pokemons[pokemon].setImageDrawable(roarAnimation[pokemon]);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        playMusic(R.raw.battle);
+    }
+
+    @Override
+    public void onBackPressed() {
+        mp.stop();
+        mp.release();
+        super.onBackPressed();
     }
 }
 
