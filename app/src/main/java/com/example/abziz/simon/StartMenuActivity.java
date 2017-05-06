@@ -14,15 +14,15 @@ public class StartMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_menu);
-        playMusic(R.raw.themesong);
+        playMusic(R.raw.themesong,0.2f);
         UpdateListeners();
     }
 
 
-    private void playMusic(int song) {
+    private void playMusic(int song,float vol) {
         mp = MediaPlayer.create(this, song);
         mp.setLooping(true);
-        mp.setVolume(0.5f, 0.5f);
+        mp.setVolume(vol,vol);
         mp.start();
     }
 
@@ -49,7 +49,7 @@ public class StartMenuActivity extends AppCompatActivity {
         super.onResume();
         mp.stop();
         mp.release();
-        playMusic(R.raw.themesong);
+        playMusic(R.raw.themesong,0.2f);
     }
 
     private void StartGame(){

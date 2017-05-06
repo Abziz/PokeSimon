@@ -19,27 +19,21 @@ public class SoundPoolPlayer {
     {
         // setup Soundpool
         this.mShortPlayer = new SoundPool(12, AudioManager.STREAM_MUSIC, 0);
-        mShortPlayer.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                Toast.makeText(pContext,(++i).toString(),Toast.LENGTH_SHORT).show();
-            }
-        });
         mSounds.put(R.raw.pikachu_happy_1, this.mShortPlayer.load(pContext, R.raw.pikachu_happy_1, 1));
-        mSounds.put(R.raw.pikachu_happy_2, this.mShortPlayer.load(pContext, R.raw.pikachu_happy_2, 1));
-        mSounds.put(R.raw.pikachu_happy_3, this.mShortPlayer.load(pContext, R.raw.pikachu_happy_3, 1));
+        mSounds.put(R.raw.pikachu_happy_2, this.mShortPlayer.load(pContext, R.raw.pikachu_happy_2, 2));
+        mSounds.put(R.raw.pikachu_happy_3, this.mShortPlayer.load(pContext, R.raw.pikachu_happy_3, 3));
 
         mSounds.put(R.raw.bulbasaur_happy_1, this.mShortPlayer.load(pContext, R.raw.bulbasaur_happy_1, 1));
-        mSounds.put(R.raw.bulbasaur_happy_2, this.mShortPlayer.load(pContext, R.raw.bulbasaur_happy_2, 1));
-        mSounds.put(R.raw.bulbasaur_happy_3, this.mShortPlayer.load(pContext, R.raw.bulbasaur_happy_3, 1));
+        mSounds.put(R.raw.bulbasaur_happy_2, this.mShortPlayer.load(pContext, R.raw.bulbasaur_happy_2, 2));
+        mSounds.put(R.raw.bulbasaur_happy_3, this.mShortPlayer.load(pContext, R.raw.bulbasaur_happy_3, 3));
 
         mSounds.put(R.raw.charmander_happy_1, this.mShortPlayer.load(pContext, R.raw.charmander_happy_1, 1));
-        mSounds.put(R.raw.charmander_happy_2, this.mShortPlayer.load(pContext, R.raw.charmander_happy_2, 1));
-        mSounds.put(R.raw.charmander_happy_3, this.mShortPlayer.load(pContext, R.raw.charmander_happy_3, 1));
+        mSounds.put(R.raw.charmander_happy_2, this.mShortPlayer.load(pContext, R.raw.charmander_happy_2, 2));
+        mSounds.put(R.raw.charmander_happy_3, this.mShortPlayer.load(pContext, R.raw.charmander_happy_3, 3));
 
         mSounds.put(R.raw.squirtle_happy_1, this.mShortPlayer.load(pContext, R.raw.squirtle_happy_1, 1));
-        mSounds.put(R.raw.squirtle_happy_2, this.mShortPlayer.load(pContext, R.raw.squirtle_happy_2, 1));
-        mSounds.put(R.raw.squirtle_happy_3, this.mShortPlayer.load(pContext, R.raw.squirtle_happy_3, 1));
+        mSounds.put(R.raw.squirtle_happy_2, this.mShortPlayer.load(pContext, R.raw.squirtle_happy_2, 2));
+        mSounds.put(R.raw.squirtle_happy_3, this.mShortPlayer.load(pContext, R.raw.squirtle_happy_3, 3));
        // mSounds.put(R.raw.squirtle_sad, this.mShortPlayer.load(pContext, R.raw.squirtle_sad, 1));
     }
 

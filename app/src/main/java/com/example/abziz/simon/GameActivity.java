@@ -41,12 +41,12 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         sp = new SoundPoolPlayer(this);
-        playMusic(R.raw.battle);
+        playMusic(R.raw.battle,0.1f);
         linkViews();
         setListeners();
         NextLevel();
     }
-    private void playMusic(int song) {
+    private void playMusic(int song,float vol) {
         if( mp != null ){
             if(mp.isPlaying()){
                 return;
@@ -54,7 +54,7 @@ public class GameActivity extends AppCompatActivity {
         }
         mp = MediaPlayer.create(this, song);
         mp.setLooping(true);
-        mp.setVolume(0.5f,0.5f);
+        mp.setVolume(vol,vol);
         mp.start();
     }
 
@@ -89,7 +89,6 @@ public class GameActivity extends AppCompatActivity {
 
     private void playRandomSound(int pokemon){
         sp.playShortResource(sounds[pokemon][new Random().nextInt(3)]);
-        mp.setVolume(0.25f,0.25f);
     }
 
     private void updateScore(){
@@ -141,7 +140,6 @@ public class GameActivity extends AppCompatActivity {
             pokemons[pokemon].setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    mp.setVolume(0.25f,0.25f);
                     int current = seq_index++;
                     if(current == sequence.size()-1){
                         ToggleButtons(false);
@@ -167,7 +165,6 @@ public class GameActivity extends AppCompatActivity {
                         player_finished =false;
                         NextLevel();
                     }
-                    mp.setVolume(0.5f,0.5f);
                 }
             });
         }
@@ -199,7 +196,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        playMusic(R.raw.battle);
+        playMusic(R.raw.battle,0.1f);
     }
 
     @Override
